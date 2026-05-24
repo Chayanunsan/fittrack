@@ -1,10 +1,11 @@
+```html
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FitTracker - บันทึกสุขภาพ</title>
-about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
@@ -20,36 +21,24 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
         }
     </script>
     <style>
-        /* ซ่อน scrollbar เพื่อความสวยงาม */
         ::-webkit-scrollbar { display: none; }
         * { -ms-overflow-style: none; scrollbar-width: none; font-family: 'Prompt', sans-serif; }
-        
         .nav-btn.active { color: #3b82f6; }
         .nav-btn { transition: color 0.2s; }
-        
-        .activity-radio:checked + label {
-            background-color: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-        }
-
-        /* เพิ่ม Font ภาษาไทย */
+        .activity-radio:checked + label { background-color: #3b82f6; color: white; border-color: #3b82f6; }
         @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 flex flex-col h-screen selection:bg-blue-200">
 
-    <!-- แถบด้านบน -->
     <header class="bg-white dark:bg-gray-800 shadow-sm z-10 p-4 sticky top-0 flex justify-between items-center">
         <h1 class="text-xl font-bold tracking-tight text-blue-600 dark:text-blue-400" id="header-title">บันทึกวันนี้</h1>
         <div class="flex items-center gap-2">
-            <!-- สถานะการเชื่อมต่อ Database -->
             <div id="sync-status" class="w-2.5 h-2.5 rounded-full bg-red-400 animate-pulse"></div>
             <span class="text-xs text-gray-400" id="sync-text">กำลังเชื่อมต่อ...</span>
         </div>
     </header>
 
-    <!-- พื้นที่หลัก -->
     <main class="flex-1 overflow-y-auto pb-20 relative">
 
         <!-- หน้า: บันทึกข้อมูล (HOME) -->
@@ -109,7 +98,6 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
             </div>
             
             <div id="save-toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 opacity-0 transition-opacity duration-300 bg-green-600 text-white px-6 py-3 rounded-full text-sm font-medium shadow-lg hidden z-50">
-                <!-- ข้อความ Toast -->
             </div>
         </section>
 
@@ -236,7 +224,6 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
 
     </main>
 
-    <!-- แถบเมนูด้านล่าง -->
     <nav class="fixed bottom-0 w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around items-center h-16 pb-safe z-20">
         <button class="nav-btn active flex flex-col items-center justify-center w-full h-full text-gray-400" data-target="home">
             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -256,7 +243,7 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
         </button>
     </nav>
 
-    <!-- Custom Confirm Modal -->
+    <!-- Modal ยืนยัน -->
     <div id="confirm-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-200 opacity-0">
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl transform scale-95 transition-transform duration-200">
             <h3 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">ยืนยันการลบ</h3>
@@ -268,20 +255,28 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
         </div>
     </div>
 
-    <!-- Firebase SDK & JAVASCRIPT LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- ตั้งค่า Firebase ---
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        // ==========================================
+        // 🔴🔴🔴 นำข้อมูล Config ของคุณมาใส่ตรงนี้ 🔴🔴🔴
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsajOuyBJaof_fT2rSWjA4PnuraUFoNlw",
+            authDomain: "fittrackbykie.firebaseapp.com",
+            projectId: "fittrackbykie",
+            storageBucket: "fittrackbykie.firebasestorage.app",
+            messagingSenderId: "205234308048",
+            appId: "1:205234308048:web:212e2224af667d59296fd5"     
+        };
+        // ==========================================
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const dbFirestore = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fittracker-app';
 
-        // --- ตัวแปรจัดการข้อมูล (State) ---
         let localData = {};
         let settings = { weightUnit: 'kg', waistUnit: 'cm', goalWeight: '', goalWaist: '' };
         let currentUser = null;
@@ -291,45 +286,29 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
         let logsUnsubscribe = null;
         let settingsUnsubscribe = null;
 
-        // ค่าคงที่สำหรับการแปลงหน่วย
         const KG_TO_LBS = 2.20462;
         const CM_TO_IN = 0.393701;
 
-        // --- ระบบ Authentication & Database Sync ---
-        const initAuth = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Auth error:", error);
-                document.getElementById('sync-text').textContent = 'เชื่อมต่อล้มเหลว';
-            }
-        };
+        // เข้าสู่ระบบแบบไม่ระบุตัวตน (ผูกกับ Browser)
+        signInAnonymously(auth).catch((error) => {
+            console.error("Auth error:", error);
+            document.getElementById('sync-text').textContent = 'เชื่อมต่อล้มเหลว';
+        });
 
-        // เมื่อโหลดหน้าเว็บ ให้เริ่มยืนยันตัวตน
-        initAuth();
-
-        // ตรวจสอบสถานะ User และดึงข้อมูล
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                
-                // ปลดล็อกปุ่มบันทึก
                 document.getElementById('btn-save-log').disabled = false;
                 document.getElementById('btn-save-settings').disabled = false;
                 
-                // แจ้งสถานะ
                 const syncStatus = document.getElementById('sync-status');
                 syncStatus.classList.remove('bg-red-400', 'animate-pulse');
                 syncStatus.classList.add('bg-green-500');
-                document.getElementById('sync-text').textContent = 'ซิงค์ข้อมูลแล้ว';
+                document.getElementById('sync-text').textContent = 'เชื่อมต่อแล้ว';
 
-                // โหลด Settings
+                // โหลด Settings ของคุณ
                 if(settingsUnsubscribe) settingsUnsubscribe();
-                settingsUnsubscribe = onSnapshot(doc(dbFirestore, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'main'), 
+                settingsUnsubscribe = onSnapshot(doc(dbFirestore, 'users', currentUser.uid, 'settings', 'main'), 
                 (docSnap) => {
                     if (docSnap.exists()) {
                         settings = { ...settings, ...docSnap.data() };
@@ -337,33 +316,30 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
                     initSettingsUI();
                     updateLabels();
                     if (!document.getElementById('view-charts').classList.contains('hidden')) renderCharts();
-                }, (error) => { console.error("Settings error:", error); });
+                }, (error) => console.error(error));
 
-                // โหลด Logs
+                // โหลด Logs ของคุณ
                 if(logsUnsubscribe) logsUnsubscribe();
-                logsUnsubscribe = onSnapshot(collection(dbFirestore, 'artifacts', appId, 'users', currentUser.uid, 'logs'), 
+                logsUnsubscribe = onSnapshot(collection(dbFirestore, 'users', currentUser.uid, 'logs'), 
                 (snapshot) => {
                     localData = {};
                     snapshot.forEach(doc => {
                         localData[doc.id] = doc.data();
                     });
                     
-                    // อัพเดทหน้าจอที่เปิดอยู่
                     if (!document.getElementById('view-home').classList.contains('hidden')) {
                         loadEntryIntoForm(document.getElementById('log-date').value);
                     }
                     if (!document.getElementById('view-charts').classList.contains('hidden')) renderCharts();
                     if (!document.getElementById('view-history').classList.contains('hidden')) renderHistory();
-                }, (error) => { console.error("Logs error:", error); });
+                }, (error) => console.error(error));
 
             } else {
                 currentUser = null;
-                if(logsUnsubscribe) logsUnsubscribe();
-                if(settingsUnsubscribe) settingsUnsubscribe();
             }
         });
 
-        // --- UTILITIES ---
+        // --- ฟังก์ชั่นทั่วไปเหมือนเดิม ---
         const getTodayStr = () => {
             const tzoffset = (new Date()).getTimezoneOffset() * 60000;
             return (new Date(Date.now() - tzoffset)).toISOString().split('T')[0];
@@ -372,18 +348,14 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
         const convertWeight = (val, toUI = true) => {
             if (!val) return '';
             val = parseFloat(val);
-            if (settings.weightUnit === 'lbs') {
-                return toUI ? (val * KG_TO_LBS).toFixed(1) : (val / KG_TO_LBS).toFixed(2);
-            }
+            if (settings.weightUnit === 'lbs') return toUI ? (val * KG_TO_LBS).toFixed(1) : (val / KG_TO_LBS).toFixed(2);
             return toUI ? val.toFixed(1) : val.toFixed(2);
         };
 
         const convertWaist = (val, toUI = true) => {
             if (!val) return '';
             val = parseFloat(val);
-            if (settings.waistUnit === 'in') {
-                return toUI ? (val * CM_TO_IN).toFixed(1) : (val / CM_TO_IN).toFixed(2);
-            }
+            if (settings.waistUnit === 'in') return toUI ? (val * CM_TO_IN).toFixed(1) : (val / CM_TO_IN).toFixed(2);
             return toUI ? val.toFixed(1) : val.toFixed(2);
         };
 
@@ -403,7 +375,6 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
             }, 2500);
         };
 
-        // --- Custom Confirm Modal Logic ---
         let confirmActionCallback = null;
         const showConfirm = (message, onConfirm) => {
             document.getElementById('confirm-msg').textContent = message;
@@ -430,12 +401,9 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
             hideConfirm();
         });
 
-
-        // --- EVENT LISTENERS & SETUP ---
         document.addEventListener('DOMContentLoaded', () => {
             initHome();
             
-            // Navigation
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const target = e.currentTarget.dataset.target;
@@ -445,7 +413,6 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
                 });
             });
 
-            // Home Events
             document.querySelectorAll('input[name="activity"]').forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     const cardioMins = document.getElementById('cardio-mins-container');
@@ -458,13 +425,9 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
                 });
             });
 
-            document.getElementById('log-date').addEventListener('change', (e) => {
-                loadEntryIntoForm(e.target.value);
-            });
-
+            document.getElementById('log-date').addEventListener('change', (e) => loadEntryIntoForm(e.target.value));
             document.getElementById('btn-save-log').addEventListener('click', saveLogToDB);
 
-            // Charts Events
             document.querySelectorAll('.range-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     document.querySelectorAll('.range-btn').forEach(b => {
@@ -480,19 +443,11 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
                 });
             });
 
-            // Settings Events
-            document.getElementById('set-weight-unit').addEventListener('change', (e) => {
-                settings.weightUnit = e.target.value;
-                updateLabels();
-            });
-            document.getElementById('set-waist-unit').addEventListener('change', (e) => {
-                settings.waistUnit = e.target.value;
-                updateLabels();
-            });
+            document.getElementById('set-weight-unit').addEventListener('change', (e) => { settings.weightUnit = e.target.value; updateLabels(); });
+            document.getElementById('set-waist-unit').addEventListener('change', (e) => { settings.waistUnit = e.target.value; updateLabels(); });
             document.getElementById('btn-save-settings').addEventListener('click', saveSettingsToDB);
             document.getElementById('btn-export').addEventListener('click', exportCSV);
 
-            // Event Delegation for History List
             document.getElementById('history-list').addEventListener('click', (e) => {
                 const editBtn = e.target.closest('.edit-btn');
                 const delBtn = e.target.closest('.del-btn');
@@ -504,7 +459,7 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
                     const date = delBtn.dataset.date;
                     showConfirm(`คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลของวันที่ ${date}?`, async () => {
                         if (!currentUser) return;
-                        await deleteDoc(doc(dbFirestore, 'artifacts', appId, 'users', currentUser.uid, 'logs', date));
+                        await deleteDoc(doc(dbFirestore, 'users', currentUser.uid, 'logs', date));
                         showToast('ลบข้อมูลแล้ว');
                     });
                 }
@@ -512,15 +467,10 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
         });
 
         function switchView(viewId) {
-            ['home', 'charts', 'history', 'settings'].forEach(v => {
-                document.getElementById(`view-${v}`).classList.add('hidden');
-            });
+            ['home', 'charts', 'history', 'settings'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
             document.getElementById(`view-${viewId}`).classList.remove('hidden');
             
-            const titles = {
-                'home': 'บันทึกวันนี้', 'charts': 'กราฟและสถิติ', 
-                'history': 'ประวัติย้อนหลัง', 'settings': 'การตั้งค่า'
-            };
+            const titles = { 'home': 'บันทึกวันนี้', 'charts': 'กราฟและสถิติ', 'history': 'ประวัติย้อนหลัง', 'settings': 'การตั้งค่า' };
             document.getElementById('header-title').textContent = titles[viewId];
 
             if (viewId === 'charts') setTimeout(renderCharts, 50);
@@ -528,7 +478,6 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
             if (viewId === 'home') loadEntryIntoForm(document.getElementById('log-date').value);
         }
 
-        // --- HOME / LOGGING ---
         function initHome() {
             const today = getTodayStr();
             document.getElementById('log-date').value = today;
@@ -581,7 +530,7 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
             const cardioMins = document.getElementById('log-cardio-mins').value;
             const notes = document.getElementById('log-notes').value;
 
-            const docRef = doc(dbFirestore, 'artifacts', appId, 'users', currentUser.uid, 'logs', date);
+            const docRef = doc(dbFirestore, 'users', currentUser.uid, 'logs', date);
 
             try {
                 if (!wUI && !waUI && activity === 'rest' && !notes) {
@@ -599,11 +548,10 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
                 showToast('บันทึกข้อมูลสำเร็จ!');
             } catch (err) {
                 console.error("Error saving doc: ", err);
-                showToast('เกิดข้อผิดพลาด กรุณาลองใหม่');
+                showToast('เกิดข้อผิดพลาดในการบันทึก');
             }
         }
 
-        // --- SETTINGS ---
         function initSettingsUI() {
             document.getElementById('set-weight-unit').value = settings.weightUnit;
             document.getElementById('set-waist-unit').value = settings.waistUnit;
@@ -624,7 +572,7 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
             };
 
             try {
-                await setDoc(doc(dbFirestore, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'main'), newSettings);
+                await setDoc(doc(dbFirestore, 'users', currentUser.uid, 'settings', 'main'), newSettings);
                 showToast('อัพเดทเป้าหมายเรียบร้อย');
             } catch (err) {
                 console.error(err);
@@ -644,7 +592,6 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
                 csv += `${date},${e.weight||''},${e.waist||''},${actTH},${e.cardioMins||''},${safeNotes}\n`;
             });
             
-            // เพิ่ม BOM ให้ Excel อ่านภาษาไทยได้
             const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
             const blob = new Blob([bom, csv], { type: 'text/csv;charset=utf-8' });
             const url = window.URL.createObjectURL(blob);
@@ -657,7 +604,6 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
             document.body.removeChild(a);
         }
 
-        // --- HISTORY ---
         function renderHistory() {
             const list = document.getElementById('history-list');
             const empty = document.getElementById('history-empty');
@@ -717,7 +663,6 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
             });
         }
 
-        // --- CHARTS & STATS ---
         function processData(days) {
             const today = new Date(getTodayStr());
             const dates = [];
@@ -921,7 +866,9 @@ about:blank#blocked    <script src="https://cdn.tailwindcss.com"></script>
             const weeks = Math.max(1, days / 7);
             document.getElementById('stat-freq').textContent = (workoutCount / weeks).toFixed(1);
         }
-
     </script>
 </body>
 </html>
+
+
+```
